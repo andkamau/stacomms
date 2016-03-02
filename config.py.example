@@ -1,5 +1,5 @@
 import os
-HOME = os.getenv('APPS_HOME')
+HOME = os.getenv('APPS_HOME') + '/stacomms'
 
 SPREADSHEET = dict(
         ID='',
@@ -8,10 +8,19 @@ SPREADSHEET = dict(
         WORKSHEET=''
         )
 
-OAUTH_CONFIG=''
+OAUTH_CONFIG='%s/xyz.json' % HOME
 
 WEB_SERVICE = dict(
+        HOST='http://localhost',
         PORT=6090,
         THREADS=200,
-        LOGS='%s/stacomms/web/logs/' % HOME
+        LOGS='%s/web/logs/' % HOME
+        )
+
+CONSUMER = dict(
+        #SLEEP_TIME=3600,
+        SLEEP_TIME=5,
+        LOGS='log-stacomms-daemon',
+        _HOME='%s/consumer' % HOME,
+        MAX_ID_FILE='%s/consumer/maxid.json' % HOME
         )
