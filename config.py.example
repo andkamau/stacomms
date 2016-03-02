@@ -1,0 +1,17 @@
+import os
+HOME = os.getenv('APPS_HOME')
+
+SPREADSHEET = dict(
+        ID='',
+        TITLE='',
+        SCOPE='https://spreadsheets.google.com/feeds',
+        WORKSHEET=''
+        )
+
+OAUTH_CONFIG=''
+
+WEB_SERVICE = dict(
+        PORT=6090,
+        THREADS=200,
+        LOGS='%s/stacomms/web/logs/' % HOME
+        )
