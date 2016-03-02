@@ -15,7 +15,6 @@ def get_params(request):
         params = {}
         for key, val in request.args.items():
             params[key] = val[0]
-        log('request params - %s' % params, 'debug')
         return params
     except Exception, err:
         log('get_params() fail - %r' % err, 'error')
@@ -59,7 +58,7 @@ def setup(func):
     '''
     def __inner(request):
         try:
-            params = get_params(request)
+            params = core.clean_up(get_params(request))
             func(params, request)
         except Exception, err:
             error = 'setup() fail - %r' % err
