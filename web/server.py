@@ -72,6 +72,7 @@ def process_request(params, request):
     Expected params:
     ================
     {'To:': 'Admin',
+    'rownumber': '2',
     'Category': 'Change of phone number',
     "Leader's category": 'AL',
     'Timestamp': '2/21/2016 20:07:45',
@@ -85,10 +86,17 @@ def process_request(params, request):
     "Class member's last name": 'Lamar'}
     '''
     try:
-        resp = "Done"
         issue = core.Issue(params)
-        resp = issue.send_email_notification()
-        log('Request: {} | Response: {}'.format(params, resp), 'info')
+        if not issue.get():
+            issue.save()
+        if issue.has_response() and not issue.notification_sent():
+            issue.send_email_notification()
+            issue.update('notification_sent', 'True')
+        else:
+            print "%s No response yet or Notification already sent: %s" % (
+                    params['rownumber'], params)
+        
+        
         write_response(request)
 
 

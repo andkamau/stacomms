@@ -37,7 +37,7 @@ class Rows(object):
             for each in range(_maxid+1, rowcount):
                 new_row = worksheet.row_values(int(each))
                 
-                params = {}
+                params = {'rownumber': int(each)}
                 idx = 0
                 for item in new_row:
                     if not fields[idx] == '':
