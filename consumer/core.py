@@ -9,55 +9,125 @@ from urllib import urlencode
 from stacomms.common import log
 from oauth2client.client import SignedJwtAssertionCredentials
 
-MAX_ID = json.load(open(config.CONSUMER['MAX_ID_FILE']))
+
+def is_empty(dct):
+    '''
+    return True if dct values are ALL blank. False, otherwise.
+    '''
+    resp = True
+    for value in dct.values():
+        if value:
+            resp = False
+            break
+    return resp
+
 
 class Rows(object):
     def __init__(self, logger):
         self.logger = logger
 
     def fetch_rows(self):
-        json_key = json.load(open(config.OAUTH_CONFIG))
-        scope = [config.SPREADSHEET.get('SCOPE')]
-        credentials = SignedJwtAssertionCredentials(
-                json_key['client_email'],
-                json_key['private_key'].encode(),
-                scope)
-        gc = gspread.authorize(credentials)
+        try:
+            json_key = json.load(open(config.OAUTH_CONFIG))
+            scope = [config.SPREADSHEET.get('SCOPE')]
+            credentials = SignedJwtAssertionCredentials(
+                    json_key['client_email'],
+                    json_key['private_key'].encode(),
+                    scope)
+            gc = gspread.authorize(credentials)
 
-        sheet = gc.open(config.SPREADSHEET.get('TITLE'))
-        worksheet = sheet.worksheet(config.SPREADSHEET.get('WORKSHEET'))
+            sheet = gc.open_by_key(config.SPREADSHEET['ID'])
+            worksheet = sheet.worksheet(config.SPREADSHEET.get('WORKSHEET'))
+        except Exception, err:
+            self.logger.error("Cannot open spreadsheet: %s" % str(err))
+            raise err
+
+        fields = worksheet.row_values(1)  # headers
+        maxid_from_file = json.load(open(config.CONSUMER['MAX_ID_FILE']))
+        _maxid = int(maxid_from_file['max_id']) - 10 # minus 10 just in case..
+        # ..we missed something
         
-        fields = worksheet.row_values(1)
-        rowcount = int(worksheet.row_count)
-        _maxid = int(MAX_ID['max_id'])
-        log("Row count: %s || Last row consumed: %s" % (
-            str(rowcount), MAX_ID['max_id']), "debug", self.logger)
+        self.logger.debug('Got worksheet | Starting from row %s' % str(_maxid))
 
-        if rowcount > _maxid+1:
-            for each in range(_maxid+1, rowcount):
-                new_row = worksheet.row_values(int(each))
-                
-                params = {'rownumber': int(each)}
-                idx = 0
-                for item in new_row:
-                    if not fields[idx] == '':
-                        params[fields[idx]] = new_row[idx]
-                    idx += 1
+        empty_count = 0
+        iteration_counter = 1
+        while True:
+            ########################################
+            # This while loop will keep going      #
+            # until it either hits the iteration   #
+            # limit (currently set at 50) or       #
+            # encounters 5 contiguous blank rows   #
+            # on the sheet                         #
+            ########################################
+
+            # guard against infinite loops
+            if iteration_counter > config.CONSUMER['ITERATION_COUNT_LIMIT']:
+                self.logger.debug("BREAK")
+                break
+            iteration_counter += 1
+
+
+            # fetch row values for `_maxid`
+            new_row = worksheet.row_values(int(_maxid))
+            self.logger.debug('Consumed row %s::  %s' % (
+                str(_maxid), new_row))
+
+            # package row values in dict with headers as keys
+            idx = 0
+            params = {}
+            for item in new_row:
+                if not fields[idx] == '':
+                    params[fields[idx]] = new_row[idx]
+                idx += 1
+            
+            # send values to web service if row isn't blank.
+            # if it's blank, check the next 5 rows. if still blank, break.
+            empty = is_empty(params)
+            if not empty:
+                params['rownumber'] = int(_maxid)
                 self.send(params)
-
+                
+                # TERMINAL POINT 1
+                # write new maxID value to file; then increment
                 _file = file(config.CONSUMER['MAX_ID_FILE'], 'w')
-                json.dump({'max_id': str(each)}, _file)
+                json.dump({'max_id': str(_maxid)}, _file)
                 _file.close()
+                _maxid += 1
 
-                log("Processed row: %s - %s" % (str(each), params),
-                        'debug', self.logger)
+                self.logger.debug('Row %s:: Sent to web service' % str(int(_maxid)-1))
 
-        else:
-            log("No new rows since last run", "debug", self.logger)
+                continue
+            else:
+                limit = config.CONSUMER['ITERATION_EMPTY_COUNT']
+                # TERMINAL POINT 2(a $ b)
+                # write new maxID value to file; then increment
+                _file = file(config.CONSUMER['MAX_ID_FILE'], 'w')
+
+                self.logger.debug('Row %s empty' % str(int(_maxid)-1))
+                if empty_count <= limit:
+                    empty_count += 1
+                    
+                    # 2a
+                    json.dump({'max_id': str(_maxid)}, _file)
+                    _file.close()
+                    _maxid += 1
+
+
+                    continue
+                else:
+                    # 2b
+                    json.dump({
+                        'max_id': str(int(_maxid) - (limit-1))}, _file)
+                    _file.close()
+                    _maxid += 1
+
+                    self.logger.info("Encountered %s empty rows. Stopped" % str(limit))
+                    break
+
+
 
     def send(self, params):
         ws = config.WEB_SERVICE['HOST'] + ':' + str(config.WEB_SERVICE['PORT'])
         url = ws + '/process?'
         args = urlencode(params)
         resp = requests.post(url + args)
-        self.logger.debug('Sent to API')
