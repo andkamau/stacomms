@@ -46,6 +46,8 @@ class Rows(object):
         maxid_from_file = json.load(open(config.CONSUMER['MAX_ID_FILE']))
         _maxid = int(maxid_from_file['max_id']) - 10 # minus 10 just in case..
         # ..we missed something
+        if _maxid < 2:
+            _maxid = 2
         
         self.logger.debug('Got worksheet | Starting from row %s' % str(_maxid))
 

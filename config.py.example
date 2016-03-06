@@ -6,6 +6,7 @@ SPREADSHEET = dict(
         TITLE='',
         SCOPE='https://spreadsheets.google.com/feeds',
         WORKSHEET='',
+        FORM='',
         SHARE_EMAIL=''
         # share the Google spreadsheet with `SHARE_EMAIL`
         )
@@ -27,4 +28,12 @@ CONSUMER = dict(
         MAX_ID_FILE='%s/consumer/maxid.json' % HOME,
         ITERATION_EMPTY_COUNT=5, # stop row iteration after x empty rows
         ITERATION_COUNT_LIMIT=50 # maximum iterations per loop
+        )
+
+EMAIL = dict(
+        URL='',
+        WHITELIST={'toggle': True, #send email only to whitelist addresses
+            'list': ['']
+            },
+        NOTIFICATIONS=True  # Email notifications toggle
         )

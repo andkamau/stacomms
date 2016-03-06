@@ -1,6 +1,8 @@
 """
 """
 import string
+import urllib
+import requests
 from stacomms import config
 from stacomms.common.memcache.core import MemcacheHandler
 
@@ -48,14 +50,42 @@ class Issue(object):
         saved_issue = self.get()
         return True if saved_issue.get('notification_sent') else False
 
+    def construct_email(self,):
+        return """Dear {leadersname}, \n\n
+                There is a response to your communication.\n
+                See below for details:\n\n
+
+                Communication submitted on {timestamp} by {leadersname} about class member: {classmembersname}: '{comments}'\n\n
+
+                Response from {to}: {response}.\n\n
+
+                To submit a new issue, go to %s\n\n
+
+                Thanks.\n
+                [NB: This is an automated notification email. Do not reply]
+                \n
+                """.format(**self.params) % config.SPREADSHEET['FORM']
+
     
     def send_email_notification(self,):
-        print "%s | Send email to %s | %s | %s" % (
-                self.id,
-                self.params["leadersemailaddress"],
-                self.params["comments"],
-                self.params['response']
-                )
+        '''
+        send email to the leader's email address
+        '''
+        email = self.construct_email()
+        recipient = self.params['leadersemailaddress']
+        args = {'to_address': recipient, 'message': email}
+        resp = False
+        if config.EMAIL['NOTIFICATIONS']:
+            if not config.EMAIL['WHITELIST']['toggle']:
+                resp = requests.post(config.EMAIL['URL'], data=args)
+            else:
+                if recipient in config.EMAIL['WHITELIST']['list']:
+                    resp = requests.post(config.EMAIL['URL'], data=args)
+        if resp:
+            print "Email to %s | %s: %s" % (
+                    recipient, str(resp.status_code), resp.text)
+        else:
+            print "Row {rownumber}: EMAIL NOT SENT: Notifications: {NOTIFICATIONS}, WHITELIST: {WHITELIST}".format(**config.EMAIL)
 
     def send_sms_notification(self):
         pass
