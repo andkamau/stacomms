@@ -51,20 +51,7 @@ class Issue(object):
         return True if saved_issue.get('notification_sent') else False
 
     def construct_email(self,):
-        return """Dear {leadersname}, \n\n
-                There is a response to your communication.\n
-                See below for details:\n\n
-
-                Communication submitted on {timestamp} by {leadersname} about class member: {classmembersname}: '{comments}'\n\n
-
-                Response from {to}: {response}.\n\n
-
-                To submit a new issue, go to %s\n\n
-
-                Thanks.\n
-                [NB: This is an automated notification email. Do not reply]
-                \n
-                """.format(**self.params) % config.SPREADSHEET['FORM']
+        return config.EMAIL['TEMPLATE'].format(**self.params) % config.SPREADSHEET['FORM']
 
     
     def send_email_notification(self,):
@@ -73,7 +60,12 @@ class Issue(object):
         '''
         email = self.construct_email()
         recipient = self.params['leadersemailaddress']
-        args = {'to_address': recipient, 'message': email}
+        args = {
+                'to': recipient,
+                'html': email,
+                'to_name': self.params['leadersname'],
+                'from_name': 'St.A Comms'
+                }
         resp = False
         if config.EMAIL['NOTIFICATIONS']:
             if not config.EMAIL['WHITELIST']['toggle']:
