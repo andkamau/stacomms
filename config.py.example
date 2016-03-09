@@ -1,6 +1,8 @@
 import os
 HOME = os.getenv('APPS_HOME') + '/stacomms'
 
+from stacomms.web.email import template as EMAIL_TEMPLATE
+
 SPREADSHEET = dict(
         ID='',
         TITLE='',
@@ -35,5 +37,6 @@ EMAIL = dict(
         WHITELIST={'toggle': True, #send email only to whitelist addresses
             'list': ['']
             },
+        TEMPLATE=EMAIL_TEMPLATE,
         NOTIFICATIONS=True  # Email notifications toggle
         )
