@@ -1,0 +1,6 @@
+stacomms-62776be928a8.json
+*.pyc
+logs/*
+logs/
+*.pid
+config.py
