@@ -88,6 +88,7 @@ class Rows(object):
             empty = is_empty(params)
             if not empty:
                 params['rownumber'] = int(_maxid)
+                params['source'] = self.source
                 self.send(params)
                 
                 # TERMINAL POINT 1

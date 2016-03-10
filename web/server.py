@@ -83,7 +83,8 @@ def process_request(params, request):
     "Does the class member have children in Children's Programme?": '',
     "Class member's first name": 'Kendrick',
     'Response': 'Done',
-    "Class member's last name": 'Lamar'}
+    "Class member's last name": 'Lamar',
+    "source": 'ONE'}
     '''
     try:
         issue = core.Issue(params)

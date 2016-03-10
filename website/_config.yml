@@ -19,4 +19,4 @@ markdown: kramdown
 # Other custom settings
 form_one_url:  "http://goo.gl/forms/4D1gQgZIXS"  # TL
 form_two_url:  "http://goo.gl/forms/GkPkCbjG5x"  # Admin
-responses_url:  ""
+

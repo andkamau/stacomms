@@ -10,7 +10,7 @@ There is a response to your communication. Details below:<br>
 <br><b>About:</b> {classmembersname}
 <br><b>Comment:</b> {comments}
 <br>
-<br><b>Response from {to}:</b> {response}
+<br><b>Response from %s:</b> {responses}
 <br><br>
 <a href='%s' target='_blank'>Click here</a> to submit another communication slip.
 <br>

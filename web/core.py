@@ -28,30 +28,33 @@ class Issue(object):
         self.params = params
         self.id = params.get('rownumber')
         self.cache = MemcacheHandler()
+        self.cache_key = '{source}.{rownumber}'.format(**params)
 
     def save(self,):
         print "Saving row {rownumber}".format(**self.params)
-        return self.cache.memc_client.add(self.params['rownumber'], self.params)
+        return self.cache.memc_client.add(self.cache_key, self.params)
 
     def get(self,):
-        return self.cache.get(self.params['rownumber'])
+        return self.cache.get(self.cache_key)
 
     def update(self, flag, value):
         self.params[str(flag)] = value
         print "Updating row %s. Adding %s with value %s" % (
                 self.params['rownumber'],
                 flag, value)
-        self.cache.memc_client.replace(self.params['rownumber'], self.params)
+        self.cache.memc_client.replace(self.cache_key, self.params)
 
     def has_response(self,):
-        return True if self.params.get('response') else False
+        return True if self.params.get('responses') else False
 
     def notification_sent(self,):
         saved_issue = self.get()
         return True if saved_issue.get('notification_sent') else False
 
     def construct_email(self,):
-        return config.EMAIL['TEMPLATE'].format(**self.params) % config.SPREADSHEET['FORM']
+        return config.EMAIL['TEMPLATE'].format(**self.params) % (
+                config.SPREADSHEET[self.params['source']]['NAME'],
+                config.SPREADSHEET[self.params['source']]['FORM'])
 
     
     def send_email_notification(self,):
@@ -73,7 +76,7 @@ class Issue(object):
             if not config.EMAIL['WHITELIST']['toggle']:
                 resp = requests.post(config.EMAIL['URL'], data=args)
             else:
-                if recipient in config.EMAIL['WHITELIST']['list']:
+                if recipient.lower() in config.EMAIL['WHITELIST']['list']:
                     resp = requests.post(config.EMAIL['URL'], data=args)
         if resp:
             print "Email to %s | %s: %s" % (
