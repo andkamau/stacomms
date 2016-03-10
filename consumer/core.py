@@ -23,27 +23,28 @@ def is_empty(dct):
 
 
 class Rows(object):
-    def __init__(self, logger):
+    def __init__(self, logger, source):
         self.logger = logger
+        self.source = source  # ONE or TWO
 
     def fetch_rows(self):
         try:
             json_key = json.load(open(config.OAUTH_CONFIG))
-            scope = [config.SPREADSHEET.get('SCOPE')]
+            scope = [config.SPREADSHEET[self.source]['SCOPE']]
             credentials = SignedJwtAssertionCredentials(
                     json_key['client_email'],
                     json_key['private_key'].encode(),
                     scope)
             gc = gspread.authorize(credentials)
 
-            sheet = gc.open_by_key(config.SPREADSHEET['ID'])
-            worksheet = sheet.worksheet(config.SPREADSHEET.get('WORKSHEET'))
+            sheet = gc.open_by_key(config.SPREADSHEET[self.source]['ID'])
+            worksheet = sheet.worksheet(config.SPREADSHEET[self.source]['WORKSHEET'])
         except Exception, err:
             self.logger.error("Cannot open spreadsheet: %s" % str(err))
             raise err
 
         fields = worksheet.row_values(1)  # headers
-        maxid_from_file = json.load(open(config.CONSUMER['MAX_ID_FILE']))
+        maxid_from_file = json.load(open(config.CONSUMER[self.source]['MAX_ID_FILE']))
         _maxid = int(maxid_from_file['max_id']) - 10 # minus 10 just in case..
         # ..we missed something
         if _maxid < 2:
@@ -63,7 +64,7 @@ class Rows(object):
             ########################################
 
             # guard against infinite loops
-            if iteration_counter > config.CONSUMER['ITERATION_COUNT_LIMIT']:
+            if iteration_counter > config.CONSUMER[self.source]['ITERATION_COUNT_LIMIT']:
                 self.logger.debug("BREAK")
                 break
             iteration_counter += 1
@@ -91,7 +92,7 @@ class Rows(object):
                 
                 # TERMINAL POINT 1
                 # write new maxID value to file; then increment
-                _file = file(config.CONSUMER['MAX_ID_FILE'], 'w')
+                _file = file(config.CONSUMER[self.source]['MAX_ID_FILE'], 'w')
                 json.dump({'max_id': str(_maxid)}, _file)
                 _file.close()
                 _maxid += 1
@@ -100,10 +101,10 @@ class Rows(object):
 
                 continue
             else:
-                limit = config.CONSUMER['ITERATION_EMPTY_COUNT']
+                limit = config.CONSUMER[self.source]['ITERATION_EMPTY_COUNT']
                 # TERMINAL POINT 2(a $ b)
                 # write new maxID value to file; then increment
-                _file = file(config.CONSUMER['MAX_ID_FILE'], 'w')
+                _file = file(config.CONSUMER[self.source]['MAX_ID_FILE'], 'w')
 
                 self.logger.debug('Row %s empty' % str(int(_maxid)-1))
                 if empty_count <= limit:

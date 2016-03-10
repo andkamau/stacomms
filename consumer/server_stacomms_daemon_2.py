@@ -18,7 +18,7 @@ class PollingDaemon(Daemon):
             try:
                 _id = str(uuid.uuid4())
                 logger.debug('starting iteration %s' % _id)
-                rows = Rows(logger, 'ONE')
+                rows = Rows(logger, 'TWO')
                 rows.fetch_rows()
                 logger.debug('finished iteration %s' % _id)
 
@@ -26,17 +26,17 @@ class PollingDaemon(Daemon):
                 error = 'polling daemon - {}'.format(str(err))
                 log(error, 'error', logger)
 
-            sleep(CONSUMER['ONE']['SLEEP_TIME'])
+            sleep(CONSUMER['TWO']['SLEEP_TIME'])
             
 
 def setup():
     try:
         loggers = {}
-        cwd = CONSUMER['ONE']['_HOME']
-        logger = logging.getLogger(CONSUMER['ONE']['LOGS'])
+        cwd = CONSUMER['TWO']['_HOME']
+        logger = logging.getLogger(CONSUMER['TWO']['LOGS'])
         logger.setLevel(logging.DEBUG)
         ch = TimedRotatingFileHandler('%s/logs/%s.log' % (cwd,
-            CONSUMER['ONE']['LOGS']), 'midnight')
+            CONSUMER['TWO']['LOGS']), 'midnight')
         formatter = logging.Formatter(
                 '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
@@ -55,7 +55,7 @@ def setup():
 
 
 if __name__ == '__main__':    
-    daemon = PollingDaemon(os.getcwd()+'/'+CONSUMER['ONE']['PID'])
+    daemon = PollingDaemon(os.getcwd()+'/'+CONSUMER['TWO']['PID'])
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
