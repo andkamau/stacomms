@@ -64,7 +64,9 @@ class Issue(object):
                 'to': recipient,
                 'html': email,
                 'to_name': self.params['leadersname'],
-                'from_name': 'St.A Comms'
+                'from_name': 'St.A Comms',
+                'subject': 'St. A Communications Response | [%s:%s]' % (
+                    self.params['leadersname'], self.params['timestamp'].strip())
                 }
         resp = False
         if config.EMAIL['NOTIFICATIONS']:
@@ -77,7 +79,7 @@ class Issue(object):
             print "Email to %s | %s: %s" % (
                     recipient, str(resp.status_code), resp.text)
         else:
-            print "Row {rownumber}: EMAIL NOT SENT: Notifications: {NOTIFICATIONS}, WHITELIST: {WHITELIST}".format(**config.EMAIL)
+            print "Row %s: EMAIL NOT SENT: Notifications: {NOTIFICATIONS}, WHITELIST: {WHITELIST}".format(**config.EMAIL) % self.params['rownumber']
 
     def send_sms_notification(self):
         pass
