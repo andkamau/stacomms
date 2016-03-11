@@ -4,14 +4,29 @@ HOME = os.getenv('APPS_HOME') + '/stacomms'
 from stacomms.web.email import template as EMAIL_TEMPLATE
 
 SPREADSHEET = dict(
+        ONE=dict(
         ID='',
+        NAME='TL',
         TITLE='',
         SCOPE='https://spreadsheets.google.com/feeds',
         WORKSHEET='',
         FORM='',
         SHARE_EMAIL=''
         # share the Google spreadsheet with `SHARE_EMAIL`
+        ),
+
+        TWO=dict(
+            ID='',
+            NAME='Admin',
+            TITLE='',
+            SCOPE='https://spreadsheets.google.com/feeds',
+            WORKSHEET='',
+            FORM='',
+            SHARE_EMAIL=''
+            # share the Google spreadsheet with `SHARE_EMAIL`
+            )
         )
+        
 
 OAUTH_CONFIG=''
 
@@ -23,19 +38,32 @@ WEB_SERVICE = dict(
         )
 
 CONSUMER = dict(
-        #SLEEP_TIME=3600,
-        SLEEP_TIME=5,
+        ONE=dict(
+        SLEEP_TIME=10800,
+        PID='consumer_one.pid',
         LOGS='log-stacomms-daemon',
         _HOME='%s/consumer' % HOME,
         MAX_ID_FILE='%s/consumer/maxid.json' % HOME,
         ITERATION_EMPTY_COUNT=5, # stop row iteration after x empty rows
         ITERATION_COUNT_LIMIT=50 # maximum iterations per loop
+        ),
+
+        TWO=dict(
+            SLEEP_TIME=10800,
+            PID='consumer_two.pid',
+            LOGS='log-stacomms-2-daemon',
+            _HOME='%s/consumer' % HOME,
+            MAX_ID_FILE='%s/consumer/maxid_2.json' % HOME,
+            ITERATION_EMPTY_COUNT=5, # stop row iteration after x empty rows
+            ITERATION_COUNT_LIMIT=50 # maximum iterations per loop
+            )
         )
+
 
 EMAIL = dict(
         URL='',
         WHITELIST={'toggle': True, #send email only to whitelist addresses
-            'list': ['']
+            'list': []
             },
         TEMPLATE=EMAIL_TEMPLATE,
         NOTIFICATIONS=True  # Email notifications toggle
