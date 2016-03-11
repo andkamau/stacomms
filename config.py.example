@@ -6,7 +6,7 @@ from stacomms.web.email import template as EMAIL_TEMPLATE
 SPREADSHEET = dict(
         ONE=dict(
         ID='',
-        NAME='TL',
+        NAME='',
         TITLE='',
         SCOPE='https://spreadsheets.google.com/feeds',
         WORKSHEET='',
@@ -17,7 +17,7 @@ SPREADSHEET = dict(
 
         TWO=dict(
             ID='',
-            NAME='Admin',
+            NAME='',
             TITLE='',
             SCOPE='https://spreadsheets.google.com/feeds',
             WORKSHEET='',
@@ -68,3 +68,17 @@ EMAIL = dict(
         TEMPLATE=EMAIL_TEMPLATE,
         NOTIFICATIONS=True  # Email notifications toggle
         )
+
+SMS = dict(
+        URL='',
+        WHITELIST={
+            'toggle': False,
+            'list': []
+            }
+        )
+
+DB = dict(
+        SELECT_PHONE="SELECT PHONE_NUMBER FROM USERS WHERE EMAIL_ADDRESS = '%s'",
+        SCHEMA='STACOMMS'
+        )
+
