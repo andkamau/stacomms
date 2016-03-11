@@ -95,6 +95,8 @@ def process_request(params, request):
 
         if issue.has_response() and not issue.notification_sent():
             issue.send_email_notification()
+            if issue.requires_sms():
+                issue.send_sms()
             issue.update('notification_sent', 'True')
         else:
             print "ROW %s: No response |or| Notification sent" % (
