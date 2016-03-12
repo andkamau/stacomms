@@ -63,7 +63,7 @@ class Issue(object):
 
 
     def requires_sms(self,):
-        return True if self.params['sendsmsnotificationwhenthetlresponds'].startswith('Yes') else False
+        return True if self.params[(config.SPREADSHEET[self.params['source']]['SMS_KEY'])].startswith('Yes') else False
 
     def get_phone_number(self,):
         '''
