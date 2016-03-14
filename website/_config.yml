@@ -17,6 +17,9 @@ url: "http://stacomms.site" # the base hostname & protocol for your site
 markdown: kramdown
 
 # Other custom settings
-form_one_url:  "http://goo.gl/forms/4D1gQgZIXS"  # TL
-form_two_url:  "http://goo.gl/forms/GkPkCbjG5x"  # Admin
+#form_one_url:  "http://goo.gl/forms/4D1gQgZIXS"  # TL
+#form_two_url:  "http://goo.gl/forms/GkPkCbjG5x"  # Admin
+form_one_url:  "/tlform.html"  # TL
+form_two_url:  "/adminform.html"  # Admin
+about_url:  "/about"  # About
 
