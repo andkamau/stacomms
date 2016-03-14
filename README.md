@@ -11,3 +11,8 @@ Deployment [TO-DO]
 * * Consumer Two
 * * Web service
 * Website hosted on S3
+
+External dependencies:
+* Google Sheets API (via https://github.com/andkamau/gspread)
+* Pythias push messaging (https://bitbucket.org/pythias_io/push_messaging/)
+* Jekyll (jekyllrb.com)
