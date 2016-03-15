@@ -1,6 +1,8 @@
 TO-DO
 =====
 
+* Fix rowcount vs. responded count logic
+* Add leader notification prompt on pending issues
 * Daily backup:  `gspread.Worksheet.export(format=csv)`
 * Documentation
 * Unit tests
