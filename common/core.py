@@ -3,7 +3,6 @@ common utility functions
 """
 from datetime import datetime
 
-
 EXCEPTIONS = {}
 EXCEPTIONS['missingParameter'] = 'Parameter Missing: %s'
 EXCEPTIONS['invalid_action'] = 'Invalid Action Invoked: %s'
@@ -11,9 +10,11 @@ EXCEPTIONS['invalid_action'] = 'Invalid Action Invoked: %s'
 
 class MissingParameterException(Exception):
     '''Exception raised when a requisite parameters is missing'''
+
     def __init__(self, missingParameter):
         error = EXCEPTIONS['missingParameter'] % str(missingParameter)
         self.value = error
+
     def __str__(self):
         return repr(self.value)
 
@@ -52,10 +53,10 @@ def verify_params(res, params, logger=None):
       If it isn't in res either, then output will be printed on screen
     '''
     if logger:
-        logger = {'logger':logger}
+        logger = {'logger': logger}
     else:
         if res.has_key('logger'):
-            logger = {'logger':res['logger']}
+            logger = {'logger': res['logger']}
         else:
             logger = {}
 
