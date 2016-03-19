@@ -23,8 +23,7 @@ class PollingDaemon(Daemon):
                 logger.debug('finished iteration %s' % _id)
 
             except Exception, err:
-                error = 'polling daemon - {}'.format(str(err))
-                log(error, 'error', logger)
+                logger.error("Error in daemon - %s" % str(err))
 
             sleep(CONSUMER['ONE']['SLEEP_TIME'])
             

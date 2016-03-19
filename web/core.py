@@ -3,6 +3,7 @@
 import json
 import string
 import urllib
+import redis
 import requests
 from stacomms import config
 from stacomms.common.memcache.core import MemcacheHandler
@@ -27,32 +28,56 @@ def clean_up(params):
 
 
 class Issue(object):
+
     def __init__(self, params):
         self.params = params
         self.id = params.get('rownumber')
-        self.cache = MemcacheHandler()
-        self.cache_key = '{source}.{rownumber}'.format(**params)
+        self.db_key = '{source}.{rownumber}'.format(**params)
+        self.db = redis.StrictRedis(**config.STORAGE['REDIS_CONFIG'])
 
-    def save(self,):
-        print "Saving row {rownumber}".format(**self.params)
-        return self.cache.memc_client.add(self.cache_key, self.params)
+    
+    def get_issue_from_db(self, ):
+        return self.db.get(self.db_key)
 
-    def get(self,):
-        return self.cache.get(self.cache_key)
 
-    def update(self, flag, value):
+    def save_issue_to_db(self, ):
+        print "Saving row {rownumber} in redis".format(**self.params)
+        return self.db.set(self.db_key, self.params, nx=True)
+
+
+    def update_issue_in_db(self, flag, value):
         self.params[str(flag)] = value
         print "Updating row %s. Adding %s with value %s" % (
+                self.params['rownumber'], flag, value)
+        return self.db.set(self.db_key, self.params, xx=True)
+
+    
+    def update_response_list(self, ):
+        '''
+        Add the row number to the list of rows with responses
+        '''
+        responses_key = '%s.%s.responded' %(
+                config.SERVICE_ID, self.params['source'])
+        length = self.db.append(responses_key,
+                ',%s' % self.params['rownumber'])
+        print '%s - Updated resp_list. List length now %s' % (
                 self.params['rownumber'],
-                flag, value)
-        self.cache.memc_client.replace(self.cache_key, self.params)
+                length)
+
 
     def has_response(self,):
         return True if self.params.get('responses') else False
 
+
     def notification_sent(self,):
-        saved_issue = self.get()
-        return True if saved_issue.get('notification_sent') else False
+        _issue = self.get_issue_from_db()
+        try:
+            saved_issue = eval(_issue)
+            return True if saved_issue.get('notification_sent') else False
+        except Exception, err:
+            print "%s - ERR: Cannot eval DB response: %s" % (
+                    self.params['rownumber'], _issue)
+            return False
 
 
     def construct_sms(self,):
