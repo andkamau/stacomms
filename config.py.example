@@ -3,6 +3,9 @@ HOME = os.getenv('APPS_HOME') + '/stacomms'
 
 from stacomms.web.email import template as EMAIL_TEMPLATE
 
+SERVICE_ID = 'STACOMMS'
+
+
 SPREADSHEET = dict(
         ONE=dict(
         ID='',
@@ -11,6 +14,7 @@ SPREADSHEET = dict(
         SCOPE='https://spreadsheets.google.com/feeds',
         WORKSHEET='',
         FORM='',
+        SMS_KEY='sendsmsnotificationwhenthetlresponds',
         SHARE_EMAIL=''
         # share the Google spreadsheet with `SHARE_EMAIL`
         ),
@@ -22,6 +26,7 @@ SPREADSHEET = dict(
             SCOPE='https://spreadsheets.google.com/feeds',
             WORKSHEET='',
             FORM='',
+            SMS_KEY='sendsmsnotificationwhentheadminresponds',
             SHARE_EMAIL=''
             # share the Google spreadsheet with `SHARE_EMAIL`
             )
@@ -37,23 +42,22 @@ WEB_SERVICE = dict(
         LOGS='%s/web/logs/' % HOME
         )
 
+
 CONSUMER = dict(
         ONE=dict(
-        SLEEP_TIME=10800,
+        SLEEP_TIME=3600,
         PID='consumer_one.pid',
         LOGS='log-stacomms-daemon',
         _HOME='%s/consumer' % HOME,
-        MAX_ID_FILE='%s/consumer/maxid.json' % HOME,
         ITERATION_EMPTY_COUNT=5, # stop row iteration after x empty rows
         ITERATION_COUNT_LIMIT=50 # maximum iterations per loop
         ),
 
         TWO=dict(
-            SLEEP_TIME=10800,
+            SLEEP_TIME=3600,
             PID='consumer_two.pid',
             LOGS='log-stacomms-2-daemon',
             _HOME='%s/consumer' % HOME,
-            MAX_ID_FILE='%s/consumer/maxid_2.json' % HOME,
             ITERATION_EMPTY_COUNT=5, # stop row iteration after x empty rows
             ITERATION_COUNT_LIMIT=50 # maximum iterations per loop
             )
@@ -62,12 +66,13 @@ CONSUMER = dict(
 
 EMAIL = dict(
         URL='',
-        WHITELIST={'toggle': True, #send email only to whitelist addresses
+        WHITELIST={'toggle': False, #send email only to whitelist addresses
             'list': []
             },
         TEMPLATE=EMAIL_TEMPLATE,
         NOTIFICATIONS=True  # Email notifications toggle
         )
+
 
 SMS = dict(
         URL='',
@@ -77,8 +82,12 @@ SMS = dict(
             }
         )
 
+
 DB = dict(
         SELECT_PHONE="SELECT PHONE_NUMBER FROM USERS WHERE EMAIL_ADDRESS = '%s'",
         SCHEMA='STACOMMS'
         )
 
+STORAGE = dict(
+        REDIS_CONFIG=dict(host='localhost', port=6379, db=0)
+        )
