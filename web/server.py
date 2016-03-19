@@ -89,19 +89,18 @@ def process_request(params, request):
     try:
         issue = core.Issue(params)
         print "Incoming row %s: %s" % (params['rownumber'], params)
-        if not issue.get():
-            issue.save()
-            print "ROW %s: Stored" % (params['rownumber'])
+        if not issue.get_issue_from_db():
+            issue.save_issue_to_db()
 
         if issue.has_response() and not issue.notification_sent():
             issue.send_email_notification()
             if issue.requires_sms():
                 issue.send_sms()
-            issue.update('notification_sent', 'True')
+            issue.update_issue_in_db('notification_sent', 'True')
+            issue.update_response_list()
         else:
             print "ROW %s: No response |or| Notification sent" % (
                     params['rownumber'])
-        
         
         write_response(request)
 

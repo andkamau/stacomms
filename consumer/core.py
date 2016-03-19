@@ -2,6 +2,7 @@
 """
 import json
 import uuid
+import redis
 import gspread
 import requests
 from stacomms import config
@@ -26,6 +27,12 @@ class Rows(object):
     def __init__(self, logger, source):
         self.logger = logger
         self.source = source  # ONE or TWO
+        self.db = dict(
+                connection=redis.StrictRedis(**config.STORAGE['REDIS_CONFIG']),
+                maxid_key='%s.%s.maxid'%(config.SERVICE_ID, source),
+                responses_key='%s.%s.responded'%(config.SERVICE_ID, source),
+                
+                )
 
     def fetch_rows(self):
         try:
@@ -44,15 +51,63 @@ class Rows(object):
             raise err
 
         fields = worksheet.row_values(1)  # headers
-        maxid_from_file = json.load(open(config.CONSUMER[self.source]['MAX_ID_FILE']))
-        _maxid = int(maxid_from_file['max_id']) - 10 # minus 10 just in case..
-        # ..we missed something
-        if _maxid < 2:
-            _maxid = 2
-        
-        self.logger.debug('Got worksheet | Starting from row %s' % str(_maxid))
 
-        empty_count = 0
+        # fetch the latest row ID fetched
+        _maxid = self.db['connection'].get(self.db['maxid_key'])
+        if not _maxid:
+            _maxid = 2 # take it from the top
+        else:
+            _maxid = int(_maxid)
+
+        # fetch list of row IDs with responses
+        resp_list_raw = self.db['connection'].get(self.db['responses_key'])
+        if resp_list_raw:
+            resp_list = resp_list_raw.split(',')
+        else:
+            resp_list = []
+
+        ##
+        # Coupl'a things to do now:
+        #   a. Find diff between all entries and entries with a response
+        #       >>> diff = int(_maxid) - len(resp_list)
+        #   b. Find the row IDs without a response:  `no_resp_list`
+        #   c. Loop through `no_resp_list`. send responses if updates.
+        #   d. Loop through rows starting from `_maxid` till 5 blank rows.
+        ##
+
+
+        diff_count = int(_maxid) - len(resp_list)
+        no_resp_list = []
+        for row in range(2, int(_maxid)+1):
+            if str(row) not in resp_list:
+                no_resp_list.append(row)
+        
+        self.logger.debug('Got worksheet | Starting point: maxid: %s and %s pending responses | Current no_resp_list: %s | Resp_list: %s' % (str(_maxid), len(no_resp_list), no_resp_list, resp_list))
+
+        ## Start of operation for rows with pending responses
+        for eachrow in no_resp_list:
+            eachrow_details = worksheet.row_values(int(eachrow))
+            self.logger.debug('%s - row consumed - %s' % (
+                eachrow, eachrow_details))
+            # package row values in dict `params` with headers as keys
+            idx = 0
+            params = {}
+            for item in eachrow_details:
+                if not fields[idx] == '':
+                    params[fields[idx]] = eachrow_details[idx]
+                idx += 1
+            params['rownumber'] = int(eachrow)
+            params['source'] = self.source
+            self.logger.debug('%s - packaged row values' % eachrow)
+            self.send(params)
+        ## End of operation for rows with pending responses
+
+        self.logger.debug("=======================================")
+        self.logger.debug("Done checking old rows for responses!")
+        self.logger.debug("Now looking for new rows...")
+        self.logger.debug("=======================================")
+
+        empty_count = 1 
         iteration_counter = 1
         while True:
             ########################################
@@ -62,72 +117,75 @@ class Rows(object):
             # encounters 5 contiguous blank rows   #
             # on the sheet                         #
             ########################################
+            try:
+                # guard against infinite loops
+                if iteration_counter > config.CONSUMER[self.source]['ITERATION_COUNT_LIMIT']:
+                    self.logger.debug(
+                            """BREAK - too many rows.
+                            The limit is currently seet at %s.
+                            You can adjust this on application config""" % (
+                                config.CONSUMER[self.source]['ITERATION_COUNT_LIMIT']
+                                ))
+                    break
+                iteration_counter += 1
 
-            # guard against infinite loops
-            if iteration_counter > config.CONSUMER[self.source]['ITERATION_COUNT_LIMIT']:
-                self.logger.debug("BREAK")
-                break
-            iteration_counter += 1
+                # fetch row values for `_maxid`
+                new_row = worksheet.row_values(int(_maxid))
+                self.logger.debug('%s - row consumed_ - %s' % (
+                    str(_maxid), new_row))
 
-
-            # fetch row values for `_maxid`
-            new_row = worksheet.row_values(int(_maxid))
-            self.logger.debug('Consumed row %s::  %s' % (
-                str(_maxid), new_row))
-
-            # package row values in dict with headers as keys
-            idx = 0
-            params = {}
-            for item in new_row:
-                if not fields[idx] == '':
-                    params[fields[idx]] = new_row[idx]
-                idx += 1
-            
-            # send values to web service if row isn't blank.
-            # if it's blank, check the next 5 rows. if still blank, break.
-            empty = is_empty(params)
-            if not empty:
-                params['rownumber'] = int(_maxid)
-                params['source'] = self.source
-                self.send(params)
+                # package row values in dict with headers as keys
+                idx = 0
+                params = {}
+                for item in new_row:
+                    if not fields[idx] == '':
+                        params[fields[idx]] = new_row[idx]
+                    idx += 1
                 
-                # TERMINAL POINT 1
-                # write new maxID value to file; then increment
-                _file = file(config.CONSUMER[self.source]['MAX_ID_FILE'], 'w')
-                json.dump({'max_id': str(_maxid)}, _file)
-                _file.close()
-                _maxid += 1
-
-                self.logger.debug('Row %s:: Sent to web service' % str(int(_maxid)-1))
-
-                continue
-            else:
-                limit = config.CONSUMER[self.source]['ITERATION_EMPTY_COUNT']
-                # TERMINAL POINT 2(a $ b)
-                # write new maxID value to file; then increment
-                _file = file(config.CONSUMER[self.source]['MAX_ID_FILE'], 'w')
-
-                self.logger.debug('Row %s empty' % str(int(_maxid)-1))
-                if empty_count <= limit:
-                    empty_count += 1
+                # send values to web service if row isn't blank.
+                # if it's blank, check the next 5 rows. if still blank, break.
+                empty = is_empty(params)
+                if not empty:
+                    params['rownumber'] = int(_maxid)
+                    params['source'] = self.source
+                    self.send(params)
                     
-                    # 2a
-                    json.dump({'max_id': str(_maxid)}, _file)
-                    _file.close()
+                    # TERMINAL POINT 1
                     _maxid += 1
 
+                    self.logger.debug('Row %s:: Sent to web service' % str(int(_maxid)-1))
 
                     continue
                 else:
-                    # 2b
-                    json.dump({
-                        'max_id': str(int(_maxid) - (limit-1))}, _file)
-                    _file.close()
-                    _maxid += 1
+                    limit = config.CONSUMER[self.source]['ITERATION_EMPTY_COUNT']
+                    # TERMINAL POINT 2
+                    # increment empty_count
+                    self.logger.debug('Row %s empty' % _maxid)
+                    if empty_count < limit:
+                        empty_count += 1
+                        _maxid += 1 # increment this value so it fetches next row on next loop
+                        continue
+                    else:
+                        _maxid = _maxid - int(config.CONSUMER[self.source]['ITERATION_EMPTY_COUNT'])
+                        # explanation of above line:
+                        # on termination of this while loop, we persist the value
+                        # of `_maxid` to enable us know where to begin on the next
+                        # run of the daemon.
+                        # after n blank rows, we need to set the value to `_maxid`-n
+                        # to account for the blank rows.
+                        self.logger.info("Encountered %s empty rows. Stopped. Reset _maxid to %s" % (str(limit), _maxid))
+                        break
 
-                    self.logger.info("Encountered %s empty rows. Stopped" % str(limit))
-                    break
+            except Exception, err:
+                self.logger.error(
+                        "ROW %s - Something failed on this row - %s" % (_maxid, str(err))
+                        )
+                _maxid += 1
+                continue
 
+        # save the last value of _maxid to db
+        key = self.db['maxid_key']
+        self.db['connection'].set(key, _maxid)
 
 
     def send(self, params):
