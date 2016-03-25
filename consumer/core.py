@@ -94,7 +94,7 @@ class Rows(object):
             params = {}
             for item in eachrow_details:
                 if not fields[idx] == '':
-                    params[fields[idx]] = eachrow_details[idx]
+                    params[fields[idx]] = eachrow_details[idx].encode('utf-8').strip()
                 idx += 1
             params['rownumber'] = int(eachrow)
             params['source'] = self.source
@@ -139,7 +139,7 @@ class Rows(object):
                 params = {}
                 for item in new_row:
                     if not fields[idx] == '':
-                        params[fields[idx]] = new_row[idx]
+                        params[fields[idx]] = new_row[idx].encode('utf-8').strip()
                     idx += 1
                 
                 # send values to web service if row isn't blank.
