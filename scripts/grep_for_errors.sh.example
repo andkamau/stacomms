@@ -1,0 +1,19 @@
+#!/bin/bash
+#Author: kamau andrew
+
+DATE=$(date +'%a-%d-%b-%Y-%H:%m:%S')
+CONSUMER_LOG=
+CONSUMER2_LOG=
+WEB_LOG=
+CONSUMER_ERR_LOG=/tmp/err/consumer1-log-${DATE}.txt
+CONSUMER2_ERR_LOG=/tmp/err/consumer2-log-${DATE}.txt
+WEB_ERR_LOG=/tmp/err/web-log-${DATE}.txt
+
+grep -i 'err' $CONSUMER_LOG > $CONSUMER_ERR_LOG
+grep -i 'err' $CONSUMER2_LOG > $CONSUMER2_ERR_LOG
+grep -i 'err' $WEB_LOG > $WEB_ERR_LOG
+
+curl -i -X POST -d attachments="{'$CONSUMER_ERR_LOG': '$CONSUMER_ERR_LOG', '$CONSUMER2_ERR_LOG': '$CONSUMER2_ERR_LOG', '$WEB_ERR_LOG': '$WEB_ERR_LOG'}" -d text='stacomms/consumer error logs' -d subject="Stacomms Error report - $DATE" -d to='user@org.domain' http://.../email
+
+
+echo "Done."

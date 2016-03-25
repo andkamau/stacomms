@@ -8,3 +8,4 @@ maxid*
 contact_list.csv
 website/_site
 *.bak
+scripts/*.sh
