@@ -18,10 +18,10 @@ TO-DO
 
 Monitoring Checklist
 --------------------
-* Website up
-* Web service up
-* Daemon running
-* Log activity
-* grep errors in logs
-* pythias/push_messaging service up
-* Twilio account balance
+* [DONE: StackDriver] Website up
+* [DONE: StackDriver] Web service up
+* [DONE: Monit] Daemon running
+* [DONE: Monit] Log activity
+* [DONE: Cron] grep errors in logs
+* [DONE: StackDriver] pythias/push_messaging service up
+* [DONE: Twilio] Twilio account balance
