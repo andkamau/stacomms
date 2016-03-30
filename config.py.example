@@ -90,8 +90,8 @@ DB = dict(
 
 STORAGE = dict(
         REDIS_CONFIG=dict(
-            host='localhost',
-            port=6379,
+            host='',
+            port=,
             db=0,
             password=os.getenv('REDIS_PASSWORD')
             )
