@@ -3,6 +3,7 @@ TO-DO
 
 * [DONE] Fix rowcount vs. responded count logic
 * Add leader notification prompt on pending issues
+* Add CL notification when query references children
 * Daily backup:  `gspread.Worksheet.export(format=csv)`
 * Documentation
 * [DONE] Unit tests: Consumer
