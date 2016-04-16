@@ -189,6 +189,9 @@ class Rows(object):
 
 
     def send(self, params):
+        """
+        send request to web service via http
+        """
         ws = config.WEB_SERVICE['HOST'] + ':' + str(config.WEB_SERVICE['PORT'])
         url = ws + '/process?'
         args = urlencode(params)

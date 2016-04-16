@@ -73,6 +73,10 @@ class ConsumerTests(unittest.TestCase):
             fields = worksheet.row_values(1)
             self.assertIsInstance(fields, list, msg="row values not in list")
 
+    def test_email(self, ):
+        self.assertIn('stacomms.site/me', str(config.EMAIL['TEMPLATE']),
+                msg="No link to individual responses page")
+
     
 
 if __name__ == '__main__':

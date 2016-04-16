@@ -164,11 +164,20 @@ class Issue(object):
                 config.SPREADSHEET[self.params['source']]['NAME'],
                 config.SPREADSHEET[self.params['source']]['FORM'])
 
+    def get_user_id(self, ):
+        """
+        get user ID from db
+        """
+        query = config.DB['SELECT_USERID'] % self.params['leadersemailaddress']
+        db_resp = run_query(query, db=config.DB['SCHEMA'])
+        if db_resp['ok'] and int(db_resp['rows']) > 0:
+            userid = db_resp['message'][0][0]
     
     def send_email_notification(self,):
         '''
         send email to the leader's email address
         '''
+        self.params['user_id'] = self.get_user_id()
         email = self.construct_email()
         recipient = self.params['leadersemailaddress']
         args = {
@@ -192,5 +201,3 @@ class Issue(object):
         else:
             print "Row %s: EMAIL NOT SENT: Notifications: {NOTIFICATIONS}, WHITELIST: {WHITELIST}".format(**config.EMAIL) % self.params['rownumber']
 
-    def send_sms_notification(self):
-        pass

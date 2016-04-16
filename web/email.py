@@ -14,6 +14,8 @@ There is a response to your communication. Details below:<br>
 <br><br>
 <a href='%s' target='_blank'>Click here</a> to submit another communication slip.
 <br>
+<a href='http://stacomms.site/me?user_id={user_id}' target='_blank'>Click here</a> to access all your communication responses
+<br>
 <br><i>Thanks.</i>
 <br>
 <br>
