@@ -26,7 +26,7 @@ class UserResponse(Resource):
 
 class Server(Resource):
   def getChild(self, user_id, request):
-      return UserResponse(int(user_id))
+      return UserResponse(user_id)
 
 root = Server()
 factory = Site(root)
