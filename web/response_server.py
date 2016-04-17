@@ -2,7 +2,7 @@ from twisted.web.server import Site
 from twisted.web.resource import Resource
 from twisted.internet import reactor
 from stacomms.web.user_responses import User
-from stacomms.web.html_templates import responses_template
+from stacomms.web.html_templates import responses_template, _responses_template
 
 class UserResponse(Resource):
 
@@ -15,12 +15,13 @@ class UserResponse(Resource):
         user_history = user.get_user_history()
         resp = ""
         for each in user_history:
+            username = user_history[each]['leadersname']
             resp += responses_template.format(**user_history[each]) % "TL"
 
 
             print each
             resp += str(each) + "<hr><br/>"
-        return "<html><body>%s</body></html>" % resp
+        return _responses_template.format(username, resp)
         #return "<html><body><pre>%s, %s</pre></body></html>" % ("Hey there...", self.user_id)
 
 class Server(Resource):
