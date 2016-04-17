@@ -98,7 +98,7 @@ class Issue(object):
         '''
         try:
             query = config.DB['SELECT_PHONE'] % self.params['leadersemailaddress']
-            db_resp = run_query(query, db=config.DB['SCHEMA'])
+            db_resp = run_query(query, db=config.DB['SCHEMA'], port=config.DB['PORT'])
             if db_resp['ok'] and int(db_resp['rows']) > 0:
                 phonenos = db_resp['message'][0][0].split(',') # comma separated list of phone numbers
 
@@ -169,9 +169,16 @@ class Issue(object):
         get user ID from db
         """
         query = config.DB['SELECT_USERID'] % self.params['leadersemailaddress']
-        db_resp = run_query(query, db=config.DB['SCHEMA'])
+        db_resp = run_query(query, db=config.DB['SCHEMA'], port=config.DB['PORT'])
+        print "Email: %s | UserID: %s" % (self.params['leadersemailaddress'],
+                db_resp.get('message'))
         if db_resp['ok'] and int(db_resp['rows']) > 0:
             userid = db_resp['message'][0][0]
+            return userid
+        else:
+            err = "ERROR: Cannot retrieve user ID from DB -- %s" % self.params
+            print err
+            return
     
     def send_email_notification(self,):
         '''

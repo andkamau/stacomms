@@ -1,6 +1,7 @@
 from twisted.web import http
 from twisted.internet import threads
 from stacomms.web import core
+from stacomms.web.user_responses import User
 
 
 def log(msg, level):
@@ -112,12 +113,36 @@ def process_request(params, request):
         log('process_request() fail - %r -- %s' % (err, params), 'error')
         write_error(request, 'error')
 
+@setup
+def process_user_responses(params, request):
+    '''
+    '''
+    try:
+        print params
+        if 'userid' in params:
+            user_id = params['userid']
+            args = User(user_id).get_user_history()
+            print "User history: %s" % args
+
+            #resp = UserResponse(args)
+            #resp.render_GET()
+            request.finish()
+        else:
+            print "ERROR: No userID in request parameters"
+            request.finish()
+
+    except Exception, err:
+        log('process_user_responses() fail - %r -- %s' % (err, params), 'error')
+        write_error(request, 'error')
+
 
 def get_pages():
     '''
     returns mapping of endpoint : process function
     '''
-    return {'/process': process_request}
+    return {'/process': process_request,
+            '/me': process_user_responses
+            }
 
 
 def catch_error(*args):
