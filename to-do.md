@@ -16,6 +16,8 @@ TO-DO
 * [DONE] stacomms.site] Web landing page
 * [DONE] Web service
 * [DONE] Spreadsheet consumer
+* Responses web server
+* Cache responses for quicker load times of responses web server
 
 
 Monitoring Checklist
@@ -27,3 +29,4 @@ Monitoring Checklist
 * [DONE: Cron] grep errors in logs
 * [DONE: StackDriver] pythias/push_messaging service up
 * [DONE: Twilio] Twilio account balance
+* Responses web server
