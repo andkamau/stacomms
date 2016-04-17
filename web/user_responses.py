@@ -64,7 +64,7 @@ class User(object):
                             timestamp=row_values[0],
                             classmembersname=row_values[5],
                             comments=row_values[8],
-                            responses=row_values[11]
+                            responses=row_values[10]
                             )
 
             return user_history
