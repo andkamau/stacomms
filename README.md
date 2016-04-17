@@ -11,6 +11,12 @@ Deployment
 * Static data stored in MySQL
 * Dynamic data stored in Redis
 * Issues / records stored on Google Sheets
+* Services
+  - Consumer ONE
+  - Consumer TWO
+  - Web service (Twisted)
+  - Responses server (Twisted)
+  - Website (S3 and Jekyll)
 
 External dependencies:
 * Google Sheets API (via https://github.com/andkamau/gspread)
