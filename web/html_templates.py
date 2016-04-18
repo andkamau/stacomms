@@ -26,8 +26,7 @@ There is a response to your communication. Details below:<br>
 responses_template = """
 <br><b>Raised by:</b> {leadersname}
 <br><b>Raised on:</b> {timestamp}
-<br><b>About:</b> {classmembersname}
-<br><b>Comment:</b> {comments}
+<br><b>Communication raised:</b> {comments}
 <br>
 <br><b>Response from %s:</b> {responses}
 <br><br>

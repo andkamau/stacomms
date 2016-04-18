@@ -62,8 +62,8 @@ class User(object):
                     user_history[cell.row] = dict(
                             leadersname=row_values[3],
                             timestamp=row_values[0],
-                            classmembersname=row_values[5],
-                            comments=row_values[8],
+                            comments="%s about %s:  %s" % (
+                                row_values[2], row_values[5], row_values[7]),
                             responses=row_values[10]
                             )
 
