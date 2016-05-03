@@ -14,7 +14,7 @@ class UserResponse(Resource):
     def render_GET(self, request):
         user = User(self.user_id)
         user_history = user.get_user_history()
-        resp = ""
+        username = resp = "[]"
         for each in user_history:
             username = user_history[each]['leadersname']
             resp += responses_template.format(**user_history[each]) % "TL"
