@@ -18,7 +18,7 @@ TO-DO
 * [DONE] Spreadsheet consumer
 * Responses web server
 * Cache responses for quicker load times of responses web server
-* Add a link to user responses page on sms
+* [DONE] Add a link to user responses page on sms
 
 
 Monitoring Checklist

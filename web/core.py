@@ -81,10 +81,23 @@ class Issue(object):
 
 
     def construct_sms(self,):
-        return """
-        St. A comms response about {classmembersname}:\n
-        %s said: {responses}.
-        """.format(**self.params) % config.SPREADSHEET[self.params['source']]['NAME']
+        user_id = self.get_user_id()
+        if not user_id: 
+            return """
+            St. A comms response about {classmembersname}:\n
+            %s said: {responses}.
+            """.format(**self.params) % config.SPREADSHEET[self.params['source']]['NAME']
+        else:
+            return """
+            St. A comms response about {classmembersname}:\n
+            %s said: {responses}.\n
+            Your communications: %s/%s
+            """.format(**self.params) % (
+                    config.SPREADSHEET[self.params['source']]['NAME'],
+                    config.RESPONSE_SERVER['NAME'],
+                    str(user_id)
+                    )
+
 
 
     def requires_sms(self,):
@@ -130,7 +143,7 @@ class Issue(object):
 
     def send_sms(self,):
         '''
-        ~$ curl -i -X POST "http://***REMOVED***:9015/message/sms?phone_number=254736777727&message=push+message+here"
+        ~$ curl -i -X POST "http://52.28.87.96:9015/message/sms?phone_number=254736777727&message=push+message+here"
         HTTP/1.1 200 OK
         Transfer-Encoding: chunked
 
