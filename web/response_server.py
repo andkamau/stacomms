@@ -3,6 +3,7 @@ from twisted.web.resource import Resource
 from twisted.internet import reactor
 from stacomms.web.user_responses import User
 from stacomms.web.html_templates import responses_template, _responses_template
+from stacomms import config
 
 class UserResponse(Resource):
 
@@ -30,5 +31,5 @@ class Server(Resource):
 
 root = Server()
 factory = Site(root)
-reactor.listenTCP(6091, factory)
+reactor.listenTCP(config.RESPONSE_SERVER['PORT'], factory)
 reactor.run()

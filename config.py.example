@@ -1,7 +1,7 @@
 import os
 HOME = os.getenv('APPS_HOME') + '/stacomms'
 
-from stacomms.web.email import template as EMAIL_TEMPLATE
+from stacomms.web.html_templates import email_template as EMAIL_TEMPLATE
 
 SERVICE_ID = 'STACOMMS'
 
@@ -42,6 +42,10 @@ WEB_SERVICE = dict(
         LOGS='%s/web/logs/' % HOME
         )
 
+RESPONSE_SERVER = dict(
+        PORT=6091,
+        HOST=''
+        )
 
 CONSUMER = dict(
         ONE=dict(
@@ -85,7 +89,10 @@ SMS = dict(
 
 DB = dict(
         SELECT_PHONE="SELECT PHONE_NUMBER FROM USERS WHERE EMAIL_ADDRESS = '%s'",
-        SCHEMA='STACOMMS'
+        SELECT_EMAIL="SELECT EMAIL_ADDRESS FROM USERS WHERE ID = '%s'",
+        SELECT_USERID="SELECT ID FROM USERS WHERE EMAIL_ADDRESS = '%s'",
+        SCHEMA='STACOMMS',
+        PORT=3306
         )
 
 STORAGE = dict(
