@@ -6,9 +6,12 @@ Enables users to:
 * Email and SMS notifications are sent to those who raised the issue (once there is a response)
 
 ## Components
+  - Consumer ONE
+  - Consumer TWO
+  - Web service (Twisted)
+  - Responses server (Twisted)
+  - Website (S3 and Jekyll)
 
-1. Consumers
-2. Web service (handles issue persistence and sending notifications)
 
 Deployment
 * App backend is running on Amazon EC2
@@ -17,12 +20,7 @@ Deployment
 * Dynamic data stored in Redis
 * Issues are raised / submitted on an embedded Google Form
 * Raised issues are stored on Google Sheets
-* Services
-  - Consumer ONE
-  - Consumer TWO
-  - Web service (Twisted)
-  - Responses server (Twisted)
-  - Website (S3 and Jekyll)
+
 
 External dependencies:
 * Google Sheets API (via https://github.com/andkamau/gspread)
