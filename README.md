@@ -13,7 +13,7 @@ Enables users to:
   - Website (S3 and Jekyll)
 
 
-Deployment
+## Infrastructure
 * App backend is running on Amazon EC2
 * Website hosted on Amazon S3
 * Static data stored in MySQL
@@ -22,9 +22,16 @@ Deployment
 * Raised issues are stored on Google Sheets
 
 
-External dependencies:
+## External dependencies:
 * Google Sheets API (via https://github.com/andkamau/gspread)
 * Pythias push messaging (https://bitbucket.org/pythias_io/push_messaging/)
 * Jekyll (jekyllrb.com)
 * Mysql
 * Redis
+
+## Data
+* Static data on MySQL. Snapshots on RDS
+* To load dynamic data on Redis:
+  - set the `STACOMMS.ONE.max_id` and `STACOMMS.TWO.max_id` keys to the highest row number with a response on the spreadsheet
+  - set `STACOMMS.ONE.responded` and `STACOMMS.TWO.responded` keys to a comma seperated list of 1 to X, where X is the highest row number with a response on the corresponding spreadsheet
+  
