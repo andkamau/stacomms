@@ -1,5 +1,5 @@
 email_template = """
-<h2>Saint A Communications</h2>
+<h2>Westi YA Communications</h2>
 <hr>                                            
 <p>Hi {leadersname},<br><br>
 
@@ -39,12 +39,12 @@ _responses_template = """
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>St. A Communications</title>
-  <meta name="description" content="Saint A digital communications platform">
+  <title>Westi YA Communications</title>
+  <meta name="description" content="Westi YA digital communications platform">
 
   <link rel="stylesheet" href="http://stacomms-test.s3-website.eu-central-1.amazonaws.com/css/main.css">
-  <link rel="canonical" href="http://stacomms.site/index.html">
-  <link rel="alternate" type="application/rss+xml" title="St. A Communications" href="http://stacomms.site/feed.xml">
+  <link rel="canonical" href="http://westiyacomms.site/index.html">
+  <link rel="alternate" type="application/rss+xml" title="Westi YA Communications" href="http://westiyacomms.site/feed.xml">
 
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
@@ -57,7 +57,7 @@ _responses_template = """
 
   <div class="wrapper">
 
-      <a class="site-title" href="http://stacomms.site/"><p>St. A Communications</p></a>
+      <a class="site-title" href="http://westiyacomms.site/"><p>Westi YA Communications</p></a>
 
     <nav class="site-nav">
       <a href="#" class="menu-icon">
@@ -87,7 +87,7 @@ _responses_template = """
 
   <div class="wrapper">
     <div class="row">
-          <div class="col-sm-12">St. A Communications Platform</div>
+          <div class="col-sm-12">Westi YA Communications Platform</div>
           <div class="col-sm-12">(c)2016</div>
     </div>
   </div>
