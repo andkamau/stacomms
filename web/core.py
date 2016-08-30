@@ -206,7 +206,7 @@ class Issue(object):
                 'to': recipient,
                 'html': email,
                 'to_name': self.params['leadersname'],
-                'from_name': 'St.A Comms',
+                'from_name': '%s Comms' % config.SERVICE_NAME,
                 'subject': '%s Communications Response | [%s:%s]' % (config.SERVICE_NAME,
                     self.params['leadersname'], self.params['timestamp'].strip())
                 }
