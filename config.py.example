@@ -4,6 +4,7 @@ HOME = os.getenv('APPS_HOME') + '/stacomms'
 from stacomms.web.html_templates import email_template as EMAIL_TEMPLATE
 
 SERVICE_ID = 'STACOMMS'
+SERVICE_NAME = 'St. A'
 
 
 SPREADSHEET = dict(

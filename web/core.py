@@ -84,15 +84,15 @@ class Issue(object):
         user_id = self.get_user_id()
         if not user_id: 
             return """
-            St. A comms response about {classmembersname}:\n
+            %s comms response about {classmembersname}:\n
             %s said: {responses}.
-            """.format(**self.params) % config.SPREADSHEET[self.params['source']]['NAME']
+            """.format(**self.params) % (config.SERVICE_NAME, config.SPREADSHEET[self.params['source']]['NAME'])
         else:
             return """
-            St. A comms response about {classmembersname}:\n
+            %s comms response about {classmembersname}:\n
             %s said: {responses}.\n
             Your communications: %s/%s
-            """.format(**self.params) % (
+            """.format(**self.params) % (config.SERVICE_NAME,
                     config.SPREADSHEET[self.params['source']]['NAME'],
                     config.RESPONSE_SERVER['NAME'],
                     str(user_id)
@@ -207,7 +207,7 @@ class Issue(object):
                 'html': email,
                 'to_name': self.params['leadersname'],
                 'from_name': 'St.A Comms',
-                'subject': 'St. A Communications Response | [%s:%s]' % (
+                'subject': '%s Communications Response | [%s:%s]' % (config.SERVICE_NAME,
                     self.params['leadersname'], self.params['timestamp'].strip())
                 }
         resp = False
