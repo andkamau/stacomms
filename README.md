@@ -28,6 +28,7 @@ Enables users to:
 * Jekyll (jekyllrb.com)
 * Mysql
 * Redis
+* db_utilities
 
 ## Data
 * Static data on MySQL. Snapshots on RDS
