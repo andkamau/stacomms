@@ -1,0 +1,5 @@
+redis
+requests
+memcache
+gspread
+twisted==16.6.0
