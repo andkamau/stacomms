@@ -1,8 +1,8 @@
 import unittest
 import redis
 import json
-import gspread
 import logging
+from gspread import gspread
 from stacomms import config
 from stacomms.consumer import core
 from oauth2client.client import SignedJwtAssertionCredentials
