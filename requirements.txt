@@ -1,5 +1,6 @@
 redis
 requests
 python-memcached
-gspread
 twisted==16.6.0
+pymysql
+oauth2client

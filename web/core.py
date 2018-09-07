@@ -6,7 +6,7 @@ import urllib
 import redis
 import requests
 from stacomms import config
-from stacomms.common.memcache.core import MemcacheHandler
+from stacomms.web import AfricasTalkingGateway
 
 from db_utilities.mysql.core import run_query
 
@@ -142,31 +142,23 @@ class Issue(object):
 
 
     def send_sms(self,):
-        '''
-        ~$ curl -i -X POST "http://52.28.87.96:9015/message/sms?phone_number=254736777727&message=push+message+here"
-        HTTP/1.1 200 OK
-        Transfer-Encoding: chunked
-
-        {"status": "queued", "to": "+254736777727", "message": "push message here", "from_": "+13234194762", "sid": "SM83f427b1203d411ba6a4a82b13670b63"}
-        ~$
-        '''
         try:
             phone_numbers = self.get_phone_number() # list of numbers
             message = self.construct_sms()
             for phone_number in phone_numbers:
-                args = {
-                        'phone_number': phone_number,
-                        'message': message
-                        }
                 if config.SMS['WHITELIST']['toggle'] and phone_number not in config.SMS['WHITELIST']['list']:
                     print "SMS NOT SENT - %s not in whitelist" % phone_number
                 else:
-                    resp = requests.post(config.SMS['URL'], data=args)
-                    if not resp.status_code == 200:
+                    gateway = AfricasTalkingGateway(
+                            configs.SMS["at_username"],
+                            configs.SMS["at_api_key"])
+                    msisdn = "+254%s" % str(phone_number).strip()[-9:]
+                    resp = gateway.sendMessage(msisdn, message)
+                    if not resp[0]["status"] == "Success":
                         print "ERROR: send_sms()-Twilio resp: %s: %s -- %s" %(
-                                resp.status_code, resp.text, self.params)
+                                resp.status_code, resp, self.params)
                     else:
-                        print "SMS sent to %s -- %s" % (phone_number, message)
+                        print "SMS sent to %s -- %s" % (msisdn, message)
         except Exception, err:
             print "ERROR: send_sms() - %s -- %s" % (err, self.params)
             raise err
