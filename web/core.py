@@ -83,20 +83,11 @@ class Issue(object):
     def construct_sms(self,):
         user_id = self.get_user_id()
         if not user_id: 
-            return """
-            %s comms response about {classmembersname}:\n
-            %s said: {responses}.
-            """.format(**self.params) % (config.SERVICE_NAME, config.SPREADSHEET[self.params['source']]['NAME'])
+            return """%s comms response about {classmembersname}:\n TL / Admin said: {responses}.
+            """.format(**self.params) % (config.SERVICE_NAME)
         else:
-            return """
-            %s comms response about {classmembersname}:\n
-            %s said: {responses}.\n
-            Your communications: %s/%s
-            """.format(**self.params) % (config.SERVICE_NAME,
-                    config.SPREADSHEET[self.params['source']]['NAME'],
-                    config.RESPONSE_SERVER['NAME'],
-                    str(user_id)
-                    )
+            return """%s comms response about {classmembersname}:\n TL / Admin said: {responses}.\n
+            """.format(**self.params) % (config.SERVICE_NAME)
 
 
 
