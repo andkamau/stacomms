@@ -34,7 +34,7 @@ SPREADSHEET = dict(
         )
         
 
-OAUTH_CONFIG=''
+OAUTH_CONFIG=os.getenv("SHEETS_OAUTH_CONFIG_JSON_FILE")
 
 WEB_SERVICE = dict(
         HOST='http://localhost',
