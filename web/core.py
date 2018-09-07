@@ -6,7 +6,7 @@ import urllib
 import redis
 import requests
 from stacomms import config
-from stacomms.web import AfricasTalkingGateway
+from stacomms.web.AfricasTalkingGateway import AfricasTalkingGateway
 
 from db_utilities.mysql.core import run_query
 
@@ -155,8 +155,8 @@ class Issue(object):
                     msisdn = "+254%s" % str(phone_number).strip()[-9:]
                     resp = gateway.sendMessage(msisdn, message)
                     if not resp[0]["status"] == "Success":
-                        print "ERROR: send_sms()-Twilio resp: %s: %s -- %s" %(
-                                resp.status_code, resp, self.params)
+                        print "ERROR: send_sms()- AT resp: %s -- %s" %(
+                                resp, self.params)
                     else:
                         print "SMS sent to %s -- %s" % (msisdn, message)
         except Exception, err:
