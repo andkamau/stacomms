@@ -59,7 +59,7 @@ CONSUMER = dict(
 
 
 EMAIL = dict(
-        URL='',
+        URL='http://localhost:9015/message/email',
         WHITELIST={'toggle': False, #send email only to whitelist addresses
             'list': []
             },
