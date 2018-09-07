@@ -1,5 +1,5 @@
 import json
-import gspread
+from gspread import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
 import config
 from pprint import pprint

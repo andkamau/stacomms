@@ -19,18 +19,6 @@ SPREADSHEET = dict(
         SHARE_EMAIL=os.getenv("SHEETS_SHARE_EMAIL")
         # share the Google spreadsheet with `SHARE_EMAIL`
         ),
-
-        TWO=dict(
-            ID='',
-            NAME='',
-            TITLE='',
-            SCOPE='https://spreadsheets.google.com/feeds',
-            WORKSHEET='',
-            FORM='',
-            SMS_KEY='sendsmsnotificationwhentheadminresponds',
-            SHARE_EMAIL=''
-            # share the Google spreadsheet with `SHARE_EMAIL`
-            )
         )
         
 
