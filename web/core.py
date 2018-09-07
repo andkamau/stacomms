@@ -150,8 +150,8 @@ class Issue(object):
                     print "SMS NOT SENT - %s not in whitelist" % phone_number
                 else:
                     gateway = AfricasTalkingGateway(
-                            configs.SMS["at_username"],
-                            configs.SMS["at_api_key"])
+                            config.SMS["at_username"],
+                            config.SMS["at_api_key"])
                     msisdn = "+254%s" % str(phone_number).strip()[-9:]
                     resp = gateway.sendMessage(msisdn, message)
                     if not resp[0]["status"] == "Success":
