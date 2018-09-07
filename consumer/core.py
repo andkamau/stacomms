@@ -3,8 +3,8 @@
 import json
 import uuid
 import redis
-import gspread
 import requests
+from gspread import gspread
 from stacomms import config
 from urllib import urlencode
 from stacomms.common import log
