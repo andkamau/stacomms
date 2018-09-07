@@ -1,5 +1,5 @@
 redis
 requests
-memcache
+python-memcached
 gspread
 twisted==16.6.0
