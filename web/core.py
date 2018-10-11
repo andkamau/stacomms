@@ -157,9 +157,7 @@ class Issue(object):
 
     def construct_email(self,):
         return config.EMAIL['TEMPLATE'].format(**self.params) % (
-                config.SPREADSHEET[self.params['source']]['NAME'],
-                config.SPREADSHEET[self.params['source']]['FORM'],
-                '{HOST}:{PORT}'.format(**config.RESPONSE_SERVER)
+                config.SPREADSHEET[self.params['source']]['NAME']
                 )
 
     def get_user_id(self, ):
