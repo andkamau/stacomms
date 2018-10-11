@@ -1,8 +1,8 @@
-start-consumer:
-	python consumer/server_stacomms_daemon.py start
+start-consumers:
+	python consumer/server_stacomms_daemon.py start && python consumer/server_stacomms_daemon_2.py start
 
-stop-consumer:
-	python consumer/server_stacomms_daemon.py stop
+stop-consumers:
+	python consumer/server_stacomms_daemon.py stop && python consumer/server_stacomms_daemon_2.py stop
 
 start-webservice:
 	twistd -y web/site-stacomms.py
