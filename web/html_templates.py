@@ -1,5 +1,5 @@
 email_template = """
-<h2>Westi YA Communications</h2>
+<h2>Stacomms Communications</h2>
 <hr>                                            
 <p>Hi {leadersname},<br><br>
 
@@ -12,9 +12,6 @@ There is a response to your communication. Details below:<br>
 <br>
 <br><b>Response from %s:</b> {responses}
 <br><br>
-<a href='%s' target='_blank'>Click here</a> to submit another communication slip.
-<br>
-<a href='%s/{user_id}' target='_blank'>Click here</a> to access all your communication responses
 <br>
 <br><i>Thanks.</i>
 <br>
