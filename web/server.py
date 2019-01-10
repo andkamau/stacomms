@@ -97,11 +97,13 @@ def process_request(params, request):
                 issue.save_issue_to_db()
 
             if issue.has_response() and not issue.notification_sent():
+                ## first, update flag to avoid multiple notifications.
+                issue.update_issue_in_db('notification_sent', 'True')
+                issue.update_response_list()
+                ## then send actual notifications
                 issue.send_email_notification()
                 if issue.requires_sms():
                     issue.send_sms()
-                issue.update_issue_in_db('notification_sent', 'True')
-                issue.update_response_list()
             else:
                 print "ROW %s: No response |or| Notification sent" % (
                         params['rownumber'])
