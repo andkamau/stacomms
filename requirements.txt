@@ -1,7 +1,7 @@
 redis
 requests
 python-memcached
-twisted==19.7.0
+twisted==22.4.0
 pymysql
 oauth2client==1.5.2
 PyOpenSSL
